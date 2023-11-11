@@ -626,7 +626,13 @@ section {
 }
 
 .service-img{
-  position: absolute;top: 40px;width: 50px;
+  position: absolute;
+  top: 40px;
+  width: 50px;
+}
+
+.service-img-p{
+  width: 15px;
 }
 
 .about .icon-boxes .icon-box h4 {
@@ -866,7 +872,7 @@ section {
 .portfolio #portfolio-flters li:hover,
 .portfolio #portfolio-flters li.filter-active {
   color: #fff;
-  background: #e03a3c;
+  background: #000;
 }
 
 .portfolio #portfolio-flters li:last-child {
