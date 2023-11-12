@@ -1,41 +1,42 @@
 <?php
-  /**
-  * Requires the "PHP Email Form" library
-  * The "PHP Email Form" library is available only in the pro version of the template
-  * The library should be uploaded to: vendor/php-email-form/php-email-form.php
-  * For more info and help: https://bootstrapmade.com/php-email-form/
-  */
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
-  // Replace contact@example.com with your real receiving email address
-  $receiving_email_address = 'contact@example.com';
+require '../assets/PHPMailer-6.8.1/src/PHPMailer.php';
+require '../assets/PHPMailer-6.8.1/src/Exception.php';
+require '../assets/PHPMailer-6.8.1/src/SMTP.php';
 
-  if( file_exists($php_email_form = '../assets/vendor/php-email-form/php-email-form.php' )) {
-    include( $php_email_form );
-  } else {
-    die( 'Unable to load the "PHP Email Form" Library!');
-  }
+$mail = new PHPMailer(true);
 
-  $contact = new PHP_Email_Form;
-  $contact->ajax = true;
-  
-  $contact->to = $receiving_email_address;
-  $contact->from_name = $_POST['name'];
-  $contact->from_email = $_POST['email'];
-  $contact->subject = $_POST['subject'];
+try {
+    // Server settings
+    // $mail->SMTPDebug = 2;  // Enable verbose debug output
+    $mail->isSMTP();       // Set mailer to use SMTP
+    $mail->Host = 'smtp.example.com';  // Specify main and backup SMTP servers
+    $mail->SMTPAuth = true;  // Enable SMTP authentication
+    $mail->Username = 'email@example.com';  // SMTP username
+    $mail->Password = 'yourpassword';  // SMTP password
+    $mail->SMTPSecure = 'tls';  // Enable TLS encryption, `ssl` also accepted
+    $mail->Port = 587;  // TCP port to connect to
 
-  // Uncomment below code if you want to use SMTP to send emails. You need to enter your correct SMTP credentials
-  /*
-  $contact->smtp = array(
-    'host' => 'example.com',
-    'username' => 'example',
-    'password' => 'pass',
-    'port' => '587'
-  );
-  */
+    // Recipients
+    $mail->setFrom('from@example.com', 'Mailer');
+    $mail->addAddress('office@perfecttransports.com', 'Recipient Name');  // Add a recipient
+    $mail->addReplyTo($_POST['email'], $_POST['name']);
 
-  $contact->add_message( $_POST['name'], 'From');
-  $contact->add_message( $_POST['email'], 'Email');
-  $contact->add_message( $_POST['message'], 'Message', 10);
+    // Content
+    $mail->isHTML(true);  // Set email format to HTML
+    $mail->Subject = $_POST['subject'];
+    $mail->Body    = nl2br(e($_POST['message']));
+    $mail->AltBody = e($_POST['message']);
 
-  echo $contact->send();
+    $mail->send();
+    echo 'Message has been sent';
+} catch (Exception $e) {
+    echo 'Message could not be sent. Mailer Error: ' . $mail->ErrorInfo;
+}
+
+function e($string) {
+    return htmlspecialchars($string, ENT_QUOTES, 'UTF-8');
+}
 ?>
